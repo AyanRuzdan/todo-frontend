@@ -31,15 +31,15 @@
 
         <div class="flex flex-wrap gap-2 mb-4">
             <input id="taskInput" type="text" placeholder="Task"
-  class="flex-[2] min-w-0 px-3 py-2 bg-black text-white border glow-border rounded outline-none placeholder-gray-400" />
+                class="flex-[2] min-w-0 px-3 py-2 bg-black text-white border glow-border rounded outline-none placeholder-gray-400" />
 
-<input id="priorityInput" type="number" placeholder="#"
-  class="flex-[1] min-w-0 px-2 py-2 bg-black text-white border glow-border rounded outline-none text-center" />
+            <input id="priorityInput" type="number" placeholder="#"
+                class="flex-[1] min-w-0 px-2 py-2 bg-black text-white border glow-border rounded outline-none text-center" />
 
-<button onclick="addTask()"
-  class="flex-[1] min-w-[80px] bg-white text-black px-4 py-2 rounded glow-button hover:scale-105 transition-all duration-150">
-  Add
-</button>
+            <button onclick="addTask()"
+                class="flex-[1] min-w-[80px] bg-white text-black px-4 py-2 rounded glow-button hover:scale-105 transition-all duration-150">
+                Add
+            </button>
 
         </div>
 
@@ -100,10 +100,6 @@
                 rightSide.appendChild(priority);
 
                 if (task.completed) {
-                    // const deleteBtn = document.createElement('button');
-                    // deleteBtn.innerHTML = '🗑️';
-                    // deleteBtn.className = 'text-white hover:text-red-400 text-sm';
-                    // deleteBtn.onclick = () => deleteTask(task._id);
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'text-white hover:text-red-400';
                     deleteBtn.innerHTML = `
