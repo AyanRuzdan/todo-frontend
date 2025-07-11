@@ -29,15 +29,18 @@
     <div class="w-full max-w-md p-6 bg-black glow-box rounded-xl">
         <h1 class="text-center mb-4 text-2xl font-semibold">TODO LIST</h1>
 
-        <div class="flex gap-2 mb-4">
+        <div class="flex flex-wrap gap-2 mb-4">
             <input id="taskInput" type="text" placeholder="Task"
-                class="flex-1 px-3 py-2 bg-black text-white border glow-border rounded outline-none placeholder-gray-400" />
-            <input id="priorityInput" type="number" placeholder="#"
-                class="w-16 px-2 py-2 bg-black text-white border glow-border rounded outline-none text-center" />
-            <button onclick="addTask()"
-                class="bg-white text-black px-4 py-2 rounded glow-button hover:scale-105 transition-all duration-150">
-                Add
-            </button>
+  class="flex-[2] min-w-0 px-3 py-2 bg-black text-white border glow-border rounded outline-none placeholder-gray-400" />
+
+<input id="priorityInput" type="number" placeholder="#"
+  class="flex-[1] min-w-0 px-2 py-2 bg-black text-white border glow-border rounded outline-none text-center" />
+
+<button onclick="addTask()"
+  class="flex-[1] min-w-[80px] bg-white text-black px-4 py-2 rounded glow-button hover:scale-105 transition-all duration-150">
+  Add
+</button>
+
         </div>
 
         <h2 class="text-lg mb-2 font-semibold">Pending</h2>
