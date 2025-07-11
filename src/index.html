@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODO - Black & White</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow-box {
+            border: 1px solid white;
+        }
+
+        .glow-border {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .glow-button {
+            box-shadow: 0 0 8px white;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md p-6 bg-black glow-box rounded-xl">
+        <h1 class="text-center mb-4 text-2xl font-semibold">TODO LIST</h1>
+
+        <div class="flex gap-2 mb-4">
+            <input id="taskInput" type="text" placeholder="Task"
+                class="flex-1 px-3 py-2 bg-black text-white border glow-border rounded outline-none placeholder-gray-400" />
+            <input id="priorityInput" type="number" placeholder="#"
+                class="w-16 px-2 py-2 bg-black text-white border glow-border rounded outline-none text-center" />
+            <button onclick="addTask()"
+                class="bg-white text-black px-4 py-2 rounded glow-button hover:scale-105 transition-all duration-150">
+                Add
+            </button>
+        </div>
+
+        <h2 class="text-lg mb-2 font-semibold">Pending</h2>
+        <ul id="pendingList" class="space-y-2 mb-6"></ul>
+
+        <h2 class="text-lg mb-2 font-semibold">Completed</h2>
+        <ul id="completedList" class="space-y-2"></ul>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/tasks';
+
+        async function fetchTasks() {
+            const res = await fetch(API_URL);
+            const tasks = await res.json();
+
+            const pendingList = document.getElementById('pendingList');
+            const completedList = document.getElementById('completedList');
+
+            pendingList.innerHTML = '';
+            completedList.innerHTML = '';
+
+            tasks.sort((a, b) => {
+                if (b.priority === a.priority) {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                }
+                return b.priority - a.priority;
+            });
+
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center px-3 py-2 border glow-border rounded bg-black glow-box';
+
+                const label = document.createElement('label');
+                label.className = 'flex items-center gap-2 cursor-pointer w-full';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = task.completed;
+                checkbox.className = 'form-checkbox w-4 h-4 accent-white cursor-pointer';
+                checkbox.onchange = () => toggleComplete(task._id);
+
+                const text = document.createElement('span');
+                text.textContent = task.text;
+                text.className = task.completed ? 'line-through text-gray-400' : '';
+
+                label.appendChild(checkbox);
+                label.appendChild(text);
+
+                const rightSide = document.createElement('div');
+                rightSide.className = 'flex gap-2 items-center';
+
+                const priority = document.createElement('span');
+                priority.className = 'text-sm';
+                priority.textContent = `#${task.priority}`;
+
+                rightSide.appendChild(priority);
+
+                if (task.completed) {
+                    // const deleteBtn = document.createElement('button');
+                    // deleteBtn.innerHTML = '🗑️';
+                    // deleteBtn.className = 'text-white hover:text-red-400 text-sm';
+                    // deleteBtn.onclick = () => deleteTask(task._id);
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'text-white hover:text-red-400';
+                    deleteBtn.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+       viewBox="0 0 24 24" stroke-width="1.5"
+       stroke="currentColor" class="w-4 h-4">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M6 18L6 7m12 11L18 7M4 7h16M10 7V4h4v3" />
+  </svg>
+`;
+                    deleteBtn.onclick = () => deleteTask(task._id);
+
+                    rightSide.appendChild(deleteBtn);
+                }
+
+                li.appendChild(label);
+                li.appendChild(rightSide);
+
+                task.completed ? completedList.appendChild(li) : pendingList.appendChild(li);
+            });
+        }
+
+        async function addTask() {
+            const text = document.getElementById('taskInput').value.trim();
+            const priority = parseInt(document.getElementById('priorityInput').value);
+            if (!text || isNaN(priority)) return;
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, priority })
+            });
+
+            document.getElementById('taskInput').value = '';
+            document.getElementById('priorityInput').value = '';
+            fetchTasks();
+        }
+
+        async function deleteTask(id) {
+            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            fetchTasks();
+        }
+
+        async function toggleComplete(id) {
+            await fetch(`${API_URL}/${id}/complete`, { method: 'PATCH' });
+            fetchTasks();
+        }
+
+        // ENTER key support for input fields
+        document.getElementById('taskInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+        document.getElementById('priorityInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+
+        fetchTasks();
+    </script>
+</body>
+
+</html>
